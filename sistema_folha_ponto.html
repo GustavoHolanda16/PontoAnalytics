@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PontoAnalytics — Sistema de Folha de Ponto</title>
+  <link rel="stylesheet" href="style.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <div class="app">
+
+    <header>
+      <div class="logo">
+        <div class="logo-icon">⏱</div>
+        <span class="logo-text">Ponto<span>Analytics</span></span>
+      </div>
+      <div class="header-badge">Empresa X</div>
+    </header>
+
+    <main>
+
+      <!-- UPLOAD SECTION -->
+      <div class="upload-section" id="upload-section">
+        <h1 class="upload-headline">Análise de<br><em>Folha de Ponto</em></h1>
+        <p class="upload-sub">Faça upload do relatório de ponto e visualize horas extras, sábados, domingos e
+          ocorrências de cada funcionário.</p>
+
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-title">Arraste seu arquivo aqui</div>
+          <div class="drop-desc">Relatório exportado do sistema de ponto (.xls ou .xlsx)</div>
+          <button class="btn-upload" onclick="document.getElementById('file-input').click()">Selecionar arquivo</button>
+          <input type="file" id="file-input" accept=".xls,.xlsx,.html,.htm" />
+        </div>
+
+        <div class="formats">
+          <span class="fmt-badge">.xls</span>
+          <span class="fmt-badge">.xlsx</span>
+          <span class="fmt-badge">.html (exportação ponto)</span>
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Processando folha de ponto...<br><strong>Calculando horas extras, sábados e
+            domingos</strong></div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="dashboard" id="dashboard">
+
+        <div class="file-bar" id="file-bar">
+          <div class="file-info">
+            <div class="file-name" id="file-name-display">—</div>
+            <div class="file-meta" id="file-meta-display">—</div>
+          </div>
+          <button class="btn-reset" onclick="resetApp()">↩ Novo arquivo</button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid" id="kpi-grid"></div>
+
+        <!-- Table -->
+        <div class="section-title">Funcionários</div>
+
+        <div class="controls">
+          <input type="text" class="search-box" id="search-box" placeholder="🔍  Buscar funcionário..."
+            oninput="renderTable()">
+          <select class="filter-select" id="filter-extras" onchange="renderTable()">
+            <option value="">Todos</option>
+            <option value="extras">Com horas extras</option>
+            <option value="sabado">Trabalhou sábado</option>
+            <option value="domingo">Trabalhou domingo</option>
+            <option value="faltas">Com faltas</option>
+          </select>
+          <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th onclick="sortBy('nome')">Funcionário</th>
+                <th onclick="sortBy('cargo')">Cargo</th>
+                <th onclick="sortBy('dias')">Dias Trab.</th>
+                <th onclick="sortBy('htrab')">H. Trabalhadas</th>
+                <th onclick="sortBy('he50')">H. Extras 50%</th>
+                <th onclick="sortBy('folga')">Folga Trab.</th>
+                <th onclick="sortBy('faltas')">Faltas</th>
+                <th onclick="sortBy('atrasos')">Atrasos</th>
+                <th onclick="sortBy('sab')">Sáb.</th>
+                <th onclick="sortBy('dom')">Dom.</th>
+                <th>Detalhe</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+
+      </div><!-- /dashboard -->
+
+    </main><!-- /main -->
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+      <div class="modal">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title" id="modal-title">—</div>
+            <div class="modal-sub" id="modal-sub">—</div>
+          </div>
+          <button class="btn-close" onclick="closeModalDirect()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-kpis" id="modal-kpis"></div>
+          <div class="section-title" style="font-size:16px;margin-bottom:12px;">Calendário do Mês</div>
+          <div class="days-grid" id="modal-days"></div>
+        </div>
+      </div>
+    </div>
+    <script src="Script.js"></script>
+</body>
+
+</html>
